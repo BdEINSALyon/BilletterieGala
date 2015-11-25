@@ -228,5 +228,9 @@ class Participant
     {
         return $this->invitedBy;
     }
+
+    public function __toString(){
+        return $this->firstName.' '.strtoupper($this->lastName);
+    }
 }
 

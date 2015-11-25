@@ -1,4 +1,4 @@
-{% extends "::base.html.twig" %}
+{% extends "::admin.html.twig" %}
 
 {% block title %}Participants{% endblock %}
 
@@ -15,21 +15,20 @@
         </h1>
     </div>
     <div class="row">
-        <div class="col-md-9">
             <table id="table_participants" class="table table-bordered table-hover table-striped">
                 <thead>
                 <tr id="search">
-                    <th class="col-md-2">Nom</th>
-                    <th class="col-md-2">Prénom</th>
+                    <th class="col-md-1">Nom</th>
+                    <th class="col-md-1">Prénom</th>
                     <th class="col-md-2">Email</th>
                     <th class="col-md-2">Type</th>
                     <th class="col-md-1">Used</th>
                     <th class="col-md-2">Invité par</th>
-                    <th class="col-md-1"></th>
+                    <th class="col-md-2"></th>
                 </tr>
                 </thead>
                 <tbody id="participants">
-                {% for participant in paticipants %}
+                {% for participant in participants %}
                     <tr>
                         <td>{{ participant.lastName }}</td>
                         <td>{{ participant.firstName }}</td>
@@ -45,7 +44,6 @@
                 {% endfor %}
                 </tbody>
             </table>
-        </div>
         </div>
     </div>
 {% endblock %}

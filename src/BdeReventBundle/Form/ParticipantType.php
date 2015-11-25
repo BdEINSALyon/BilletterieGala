@@ -23,8 +23,11 @@ class ParticipantType extends AbstractType
             ->add('lastName', 'text')
             ->add('email', 'text')
             ->add('type')
-            ->add('used')
-            ->add('invitedBy');
+            ->add('used', 'checkbox', array('attr' => array('align_with_widget' => true)))
+            ->add('invitedBy')
+            ->add('save', 'submit', array(
+                'attr' => array('class' => 'save'),
+            ));;
     }
 
     public function configureOptions(OptionsResolver $resolver)
