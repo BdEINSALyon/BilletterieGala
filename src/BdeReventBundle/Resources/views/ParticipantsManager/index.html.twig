@@ -2,14 +2,14 @@
 
 {% block title %}Participants{% endblock %}
 
-{% block body %}
+{% block content %}
 <div class="container">
     <div class="page-header">
         <h1>{% block head_title %}Participants{% endblock %} <small>{% block head_small %}Gestion des participants{% endblock %}</small>
 
             <div class="pull-right">
                 <div class="btn-group" style="">
-                    <a class="btn btn-success" href="#">Ajouter</a>
+                    <a class="btn btn-success" href="{{ url("bderevent_participantsmanager_add") }}">Ajouter</a>
                 </div>
             </div>
         </h1>
@@ -37,8 +37,8 @@
                         <td>{{ participant.used }}</td>
                         <td>{{ participant.invitedBy }}</td>
                         <td><div class="btn-group" role="group">
-                                <button type="button" class="btn btn-primary">E</button>
-                                <button type="button" class="btn btn-danger">D</button>
+                                <a href="{{ url("bderevent_participantsmanager_edit",{id:participant.id}) }}" class="btn btn-primary">{{ icon('edit') }}</a>
+                                <a href="{{ url("bderevent_participantsmanager_delete",{id:participant.id}) }}" class="btn btn-danger">{{ icon('trash') }}</a>
                             </div></td>
                     </tr>
                 {% endfor %}

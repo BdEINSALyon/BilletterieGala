@@ -1,7 +1,10 @@
-{% extends "::base.html.twig" %}
+{% extends "::admin.html.twig" %}
 
-{% block title %}BdeReventBundle:ParticipantsManager:delete{% endblock %}
+{% block title %}Suppression{% endblock %}
 
-{% block body %}
-<h1>Welcome to the ParticipantsManager:delete page</h1>
+{% block content %}
+    <div class="jumbotron">
+        <h2>Êtes-vous sur de vouloir supprimer ?</h2>
+        <p><form method="post"> <button type="submit" class="btn btn-danger btn-lg btn-block">OUI, JE VEUX SUPPRIMER !!</button></form></p>
+    </div>
 {% endblock %}

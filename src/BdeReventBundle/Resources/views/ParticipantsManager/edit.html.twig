@@ -1,7 +1,7 @@
-{% extends "::base.html.twig" %}
+{% extends "::admin.html.twig" %}
 
-{% block title %}BdeReventBundle:ParticipantsManager:edit{% endblock %}
+{% block title %}BdeReventBundle:ParticipantsManager:add{% endblock %}
 
-{% block body %}
-<h1>Welcome to the ParticipantsManager:edit page</h1>
+{% block content %}
+    {{ form(form, { 'style': 'horizontal' }) }}
 {% endblock %}
