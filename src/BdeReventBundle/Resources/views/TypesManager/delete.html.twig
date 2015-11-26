@@ -1,0 +1,13 @@
+{% extends "::admin.html.twig" %}
+
+{% block title %}Suppression{% endblock %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h2>Êtes-vous sur de vouloir supprimer ?</h2>
+
+        <form method="post">
+            <button type="submit" class="btn btn-danger btn-lg btn-block">OUI, JE VEUX SUPPRIMER !!</button>
+        </form>
+    </div>
+{% endblock %}

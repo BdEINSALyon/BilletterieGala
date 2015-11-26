@@ -47,27 +47,13 @@ class Type
     }
 
     /**
-     * Set name
+     * Get canInvite
      *
-     * @param string $name
-     *
-     * @return Type
+     * @return boolean
      */
-    public function setName($name)
+    public function getCanInvite()
     {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
+        return $this->canInvite;
     }
 
     /**
@@ -84,14 +70,33 @@ class Type
         return $this;
     }
 
-    /**
-     * Get canInvite
-     *
-     * @return boolean
-     */
-    public function getCanInvite()
+    public function __toString()
     {
-        return $this->canInvite;
+        return $this->getName();
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Type
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
     }
 }
 

@@ -5,7 +5,6 @@ namespace BdeReventBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Created by PhpStorm.
@@ -23,7 +22,7 @@ class ParticipantType extends AbstractType
             ->add('lastName', 'text')
             ->add('email', 'text')
             ->add('type')
-            ->add('used', 'checkbox', array('attr' => array('align_with_widget' => true)))
+            ->add('used', 'checkbox', array('attr' => array('align_with_widget' => true), 'required' => false))
             ->add('invitedBy')
             ->add('save', 'submit', array(
                 'attr' => array('class' => 'save'),
