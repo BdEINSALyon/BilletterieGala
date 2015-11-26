@@ -5,7 +5,6 @@ namespace BdeReventBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
  * Created by PhpStorm.
@@ -21,7 +20,10 @@ class MailType extends AbstractType
         $builder
         ->add('type')
         ->add('object')
-        ->add('message');
+            ->add('message', null, array('required' => false))
+            ->add('save', 'submit', array(
+                'attr' => array('class' => 'save'),
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

@@ -1,0 +1,12 @@
+{% extends "::admin.html.twig" %}
+
+{% block title %}Editer{% endblock %}
+
+{% block content %}
+    {{ form(form, { 'style': 'horizontal' }) }}
+{% endblock %}
+{% block javascript %}
+    {{ parent() }}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.3.0/tinymce.min.js"></script>
+    <script>tinymce.init({selector: 'textarea'});</script>
+{% endblock %}

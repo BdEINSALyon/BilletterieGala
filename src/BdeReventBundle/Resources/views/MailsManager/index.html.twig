@@ -1,0 +1,46 @@
+{% extends "::admin.html.twig" %}
+
+{% block title %}Participants{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <h1>{% block head_title %}Mails{% endblock %}
+                <small>{% block head_small %}Gestion des mails{% endblock %}</small>
+
+                <div class="pull-right">
+                    <div class="btn-group" style="">
+                        <a class="btn btn-success" href="{{ url("bderevent_mailsmanager_add") }}">Ajouter</a>
+                    </div>
+                </div>
+            </h1>
+        </div>
+        <div class="row">
+            <table id="table_mails" class="table table-bordered table-hover table-striped">
+                <thead>
+                <tr id="search">
+                    <th class="col-md-4">Type</th>
+                    <th class="col-md-6">Objet</th>
+                    <th class="col-md-2"></th>
+                </tr>
+                </thead>
+                <tbody id="mails">
+                {% for mail in mails %}
+                    <tr>
+                        <td>{{ mail.type }}</td>
+                        <td>{{ mail.object }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ url("bderevent_mailsmanager_edit",{id:mail.id}) }}"
+                                   class="btn btn-primary">{{ icon('edit') }}</a>
+                                <a href="{{ url("bderevent_mailsmanager_delete",{id:mail.id}) }}"
+                                   class="btn btn-danger">{{ icon('trash') }}</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
