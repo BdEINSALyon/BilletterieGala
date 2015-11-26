@@ -1,0 +1,8 @@
+services:
+#  bde.mailgun:
+#    class: Mailgun\Mailgun
+#    arguments: [%mailgun_api%]
+
+  bde.main.mailer_service:
+    class: BdeReventBundle\Mail\MailerService
+    arguments: [ %secret%, %host%, @doctrine.orm.entity_manager, @twig, @router ]

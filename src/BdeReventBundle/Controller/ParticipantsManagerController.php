@@ -4,9 +4,9 @@ namespace BdeReventBundle\Controller;
 
 use BdeReventBundle\Entity\Participant;
 use BdeReventBundle\Form\ParticipantType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -114,8 +114,19 @@ class ParticipantsManagerController extends Controller
      */
     public function resendMailAction($id)
     {
+
+        $participant = $this->get('doctrine.orm.entity_manager')->getRepository('BdeReventBundle:Participant')->find($id);
+        if ($participant == null) {
+            throw $this->createNotFoundException('Participant introuvable!');
+        }
+        $mail = $this->get('doctrine.orm.entity_manager')->getRepository('BdeReventBundle:Mail')->findOneBy(array(
+            'type' => $participant->getType()
+        ));
+        $mail = $this->get('bde.main.mailer_service')->generateMailFromData($mail, $participant);
+
         return array(
-                // ...
-            );    }
+            'message' => $mail['body']
+        );
+    }
 
 }
