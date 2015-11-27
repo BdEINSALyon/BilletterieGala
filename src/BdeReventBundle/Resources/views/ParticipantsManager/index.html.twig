@@ -22,7 +22,7 @@
                     <th class="col-md-1">Prénom</th>
                     <th class="col-md-2">Email</th>
                     <th class="col-md-2">Type</th>
-                    <th class="col-md-1">Used</th>
+                    <th class="col-md-1">Clef</th>
                     <th class="col-md-2">Invité par</th>
                     <th class="col-md-2"></th>
                 </tr>
@@ -34,9 +34,11 @@
                         <td>{{ participant.firstName }}</td>
                         <td>{{ participant.email }}</td>
                         <td>{{ participant.type }}</td>
-                        <td>{{ participant.used }}</td>
+                        <td>{{ invite_token(participant) }}</td>
                         <td>{{ participant.invitedBy }}</td>
                         <td><div class="btn-group" role="group">
+                                <a href="{{ url("return_mail",{key:invite_token(participant)}) }}"
+                                   class="btn btn-primary">{{ icon('link') }}</a>
                                 <a href="{{ url("bderevent_participantsmanager_edit",{id:participant.id}) }}" class="btn btn-primary">{{ icon('edit') }}</a>
                                 <a href="{{ url("bderevent_participantsmanager_delete",{id:participant.id}) }}" class="btn btn-danger">{{ icon('trash') }}</a>
                             </div></td>

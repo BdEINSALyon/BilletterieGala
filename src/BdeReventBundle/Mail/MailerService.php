@@ -18,7 +18,7 @@ use Symfony\Component\Routing\Router;
  */
 class MailerService
 {
-    private $_secret;
+    private $_service;
     private $_em;
     private $_twig;
     private $_router;
@@ -30,31 +30,13 @@ class MailerService
      * @param EntityManager $_em
      * @param \Twig_Environment $_twig
      */
-    public function __construct($_secret, $website, EntityManager $_em, \Twig_Environment $_twig, Router $router)
+    public function __construct(TokenService $_service, $website, EntityManager $_em, \Twig_Environment $_twig, Router $router)
     {
-        $this->_secret = $_secret;
+        $this->_service = $_service;
         $this->_website = $website;
         $this->_em = $_em;
         $this->_twig = $_twig;
         $this->_router = $router;
-    }
-
-    public function _decrypt_data($data)
-    {
-        $data = preg_split('/\./i', $data);
-        $encrypted = ($data[1]);
-        if ($encrypted != (strtoupper(substr(md5(sha1($this->_get_secret_hash() . $data[0] . $this->_get_secret_hash())), 0, 7))))
-            return null;
-        return intval($data[0]);
-    }
-
-    private function _get_secret_hash()
-    {
-        $md5_s = md5($this->_secret);
-        $sha1_s = sha1($this->_secret);
-        $md5_md5_s = md5($md5_s);
-        return
-            sha1($md5_md5_s) . sha1($sha1_s . $md5_md5_s . $md5_s);
     }
 
     public function generateMailFromData(Mail $mail, Participant $participant)
@@ -70,15 +52,10 @@ class MailerService
         $message = $this->_twig->render("@BdeRevent/Mail/mail.html.twig", array(
             'content' => $twig->render("mail." . $mail->getId(), array(
                 'participant' => $participant,
-                'link' => $this->_website . $this->_router->generate("return_mail", array('key' => $this->_crypt_data($participant->getId())))
+                'link' => $this->_website . $this->_router->generate("return_mail", array('key' => $this->_service->crypt_data($participant->getId())))
             )),
             'config' => array()
         ));
         return ['subject' => $subject, 'body' => $message];
-    }
-
-    public function _crypt_data($participant_id)
-    {
-        return $participant_id . '.' . strtoupper(substr(md5(sha1($this->_get_secret_hash() . $participant_id . $this->_get_secret_hash())), 0, 7));
     }
 }

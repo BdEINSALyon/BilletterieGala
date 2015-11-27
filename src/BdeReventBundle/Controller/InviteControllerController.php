@@ -24,7 +24,7 @@ class InviteControllerController extends Controller
      */
     public function inviteAction($key)
     {
-        $id = $this->get("bde.main.mailer_service")->_decrypt_data($key);
+        $id = $this->get("bde.revent.token_service")->decrypt_data($key);
         if ($id == null) {
             throw $this->createNotFoundException();
         }

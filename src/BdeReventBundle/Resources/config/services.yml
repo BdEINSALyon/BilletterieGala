@@ -5,4 +5,12 @@ services:
 
   bde.main.mailer_service:
     class: BdeReventBundle\Mail\MailerService
-    arguments: [ %secret%, %host%, @doctrine.orm.entity_manager, @twig, @router ]
+    arguments: [@bde.revent.token_service, %host%, @doctrine.orm.entity_manager, @twig, @router ]
+  bde.revent.token_service:
+    class: BdeReventBundle\Mail\TokenService
+    arguments: [ %secret% ]
+  bde.revent.invite_twig:
+    class: BdeReventBundle\Helpers\InviteLink
+    arguments: [ @bde.revent.token_service ]
+    tags:
+      - { name: twig.extension }
