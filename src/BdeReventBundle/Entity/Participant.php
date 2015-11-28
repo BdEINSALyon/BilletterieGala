@@ -65,6 +65,13 @@ class Participant
     private $guests;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(name="weezevent_invites", type="integer")
+     */
+    private $guests_by_weezevent;
+
+    /**
      * @var Participant
      *
      * @ORM\ManyToOne(targetEntity="BdeReventBundle\Entity\Participant", inversedBy="guests")
@@ -86,6 +93,16 @@ class Participant
     }
 
     /**
+     * Get firstName
+     *
+     * @return string
+     */
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
+
+    /**
      * Set firstName
      *
      * @param string $firstName
@@ -100,13 +117,13 @@ class Participant
     }
 
     /**
-     * Get firstName
+     * Get lastName
      *
      * @return string
      */
-    public function getFirstName()
+    public function getLastName()
     {
-        return $this->firstName;
+        return $this->lastName;
     }
 
     /**
@@ -124,13 +141,13 @@ class Participant
     }
 
     /**
-     * Get lastName
+     * Get email
      *
      * @return string
      */
-    public function getLastName()
+    public function getEmail()
     {
-        return $this->lastName;
+        return $this->email;
     }
 
     /**
@@ -148,13 +165,13 @@ class Participant
     }
 
     /**
-     * Get email
+     * Get type
      *
-     * @return string
+     * @return Type
      */
-    public function getEmail()
+    public function getType()
     {
-        return $this->email;
+        return $this->type;
     }
 
     /**
@@ -172,13 +189,13 @@ class Participant
     }
 
     /**
-     * Get type
+     * Get used
      *
-     * @return Type
+     * @return boolean
      */
-    public function getType()
+    public function getUsed()
     {
-        return $this->type;
+        return $this->used;
     }
 
     /**
@@ -196,13 +213,13 @@ class Participant
     }
 
     /**
-     * Get used
+     * Get invitedById
      *
-     * @return boolean
+     * @return Participant|null
      */
-    public function getUsed()
+    public function getInvitedBy()
     {
-        return $this->used;
+        return $this->invitedBy;
     }
 
     /**
@@ -219,18 +236,24 @@ class Participant
         return $this;
     }
 
-    /**
-     * Get invitedById
-     *
-     * @return Participant|null
-     */
-    public function getInvitedBy()
-    {
-        return $this->invitedBy;
-    }
-
     public function __toString(){
         return $this->firstName.' '.strtoupper($this->lastName);
+    }
+
+    /**
+     * @return int
+     */
+    public function getGuestsByWeezevent()
+    {
+        return $this->guests_by_weezevent;
+    }
+
+    /**
+     * @param int $guests_by_weezevent
+     */
+    public function setGuestsByWeezevent($guests_by_weezevent)
+    {
+        $this->guests_by_weezevent = $guests_by_weezevent;
     }
 }
 

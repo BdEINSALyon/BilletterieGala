@@ -22,7 +22,7 @@ class InviteControllerController extends Controller
     /**
      * @Route("/{key}/endPayment", name="end_payment")
      */
-    public function endPaymentAction($key)
+    public function endPaymentAction(\Symfony\Component\HttpFoundation\Request $request, $key)
     {
 
         $id = $this->get("bde.revent.token_service")->decrypt_data($key);
@@ -35,12 +35,16 @@ class InviteControllerController extends Controller
         if ($participant == null) {
             throw $this->createNotFoundException();
         }
+        if ($participant->getUsed()) {
+            throw $this->createNotFoundException();
+        }
 
         $participant->setUsed(true);
+        $participant->setGuestsByWeezevent($request->get('nbInvite'));
         $em->persist($participant);
         $em->flush();
 
-        $response = new Response(json_encode(array('participant' => $participant)));
+        $response = new Response(json_encode(array('status' => 'ok')));
         $response->headers->set('Content-Type', 'application/json');
 
         return $response;
