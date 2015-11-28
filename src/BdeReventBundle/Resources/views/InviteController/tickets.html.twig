@@ -43,7 +43,6 @@
                     if ($content.html() != $2.find('#security_info_popin').html())
                         $2.find('#security_info_popin').html($content.html());
                 } catch (ex) {
-                    console.log("Cross-Domain Exception");
                 }
                 return 0;
             };
@@ -57,18 +56,18 @@
             var testBuy = function () {
                 try {
                     var $2 = $($("iframe")[0].contentDocument);
+                    $2.find("#venteSupenduesOrgaInfo").hide();
                     var test = $2.find(".downloadTicketButton").length;
                     test += $2.find(".message_confirmation_title").length;
                     test += $2.find("#big_check").length;
                     if (test > 0) {
                         console.log("Achat fini!");
-                        $.post("{{ url('end_payment', {key: token}, true) }}", function (data) {
+                        $.post("{{ url('end_payment', {key: token}, true) }}", {nbInvite: window.nbInvites}, function (data) {
                             console.log(data);
                         });
                         return 1;
                     }
                 } catch (ex) {
-                    console.log("Cross-Domain Exception");
                 }
                 return 0;
             };
@@ -77,8 +76,9 @@
                 if (!testBuy() && window.checkBuy)
                     setTimeout(recall, 500);
             };
-            recall();
+            setTimeout(recall, 500);
         });
+        window.nbInvites = 0;
         $(function () {
             var recall = function () {
                 if (!hookForm())
@@ -88,11 +88,23 @@
                 try {
                     var $2 = $($("iframe")[0].contentDocument);
                     var test = $2.find("#submitTicketForm").length;
-                    test += $2.find("input[name='current_step']").length == 'tickets';
+                    test += $2.find("input[name='current_step']").val() == 'tickets';
                     if (test > 0) {
                         var form = $2.find("#FormBilleterie");
                         form.find(".bloc_liste_billets").show();
                         form.find(".picto_cat").hide();
+                        var iframeWindow = $("iframe")[0].contentWindow;
+                        updateAmountTickets = function () {
+                            iframeWindow.$("input[name^='id_code_cpt_']").each(function () {
+                                var idPrice = iframeWindow.$(this).val();
+                                var positionPrice = iframeWindow.$('#cpt_chps_' + idPrice).val();
+                                var amountPrice = iframeWindow.$('#montantBilletInitial_' + positionPrice).val();
+                                if (amountPrice > 0 && iframeWindow.$('#quantite_' + idPrice).val() >= 0) {
+                                    iframeWindow.verifQuantitesEvMax();
+                                    iframeWindow.majPrixBillet(amountPrice, idPrice, positionPrice);
+                                }
+                            });
+                        };
 
                         // Mange hidden products
                         var type = "{{ participant.type.name }}" == "Diplomé" ? 1 : 0;
@@ -100,26 +112,101 @@
                         switch (type) {
                             case 0:
                                 hide = ["ticket_table_642053", "ticket_table_632275", "ticket_table_641927", "ticket_table_632253"];
+                                // Gestion du nombre maximal d'invités
+                                var invit1 = $2.find('#quantite_645592');
+                                var invit2 = $2.find('#quantite_645590');
+                                var checkAndStore2 = function () {
+                                    if (parseInt($(invit1).val()) + parseInt($(invit2).val()) > 1) {
+                                        $(invit1).val(0);
+                                        $(invit2).val(0);
+                                        updateAmountTickets();
+                                        $('#tooMuchPlace').modal()
+                                    }
+                                };
+                                $(invit1).change(checkAndStore2);
+                                $(invit2).change(checkAndStore2);
                                 break;
                             default:
                                 hide = ["ticket_table_645592", "ticket_table_645590"];
+                                // Gestion du nombre maximal d'invités
+                                var invitRepas = $2.find('#quantite_632275');
+                                var invitSoiree = $2.find('#quantite_632253');
+                                var diplomeSoiree = $2.find('#quantite_641927');
+                                var diplomeRepas = $2.find('#quantite_642053');
+                                var checkAndStore = function () {
+                                    window.nbInvites = parseInt($(invitRepas).val()) + parseInt($(invitSoiree).val());
+                                    if (window.nbInvites > 7) {
+                                        $(invitRepas).val(0);
+                                        $(invitSoiree).val(0);
+                                        updateAmountTickets();
+                                        $('#tooMuchInvites').modal()
+                                    }
+                                    if (parseInt($(diplomeRepas).val()) + parseInt($(diplomeSoiree).val()) > 1) {
+                                        $(diplomeRepas).val(0);
+                                        $(diplomeSoiree).val(0);
+                                        updateAmountTickets();
+                                        $('#tooMuchPlace').modal()
+                                    }
+                                };
+                                $(invitRepas).change(checkAndStore);
+                                $(invitSoiree).change(checkAndStore);
+                                $(diplomeRepas).change(checkAndStore);
+                                $(diplomeSoiree).change(checkAndStore);
                         }
 
                         hide.forEach(function (value) {
                             form.find("#" + value).hide();
                         });
 
+
+                        $2.find('#quantite_632275').change(function (e) {
+                            console.log($(e.target).val());
+                        })
+
                         $2.find("#submitTicketForm").click(function () {
+                            setTimeout(recall, 1000);
+                        });
+                        form.submit(function (e) {
+                            e.preventDefault();
                             setTimeout(recall, 1000);
                         });
                         return 1;
                     }
                 } catch (ex) {
-                    console.log(ex);
                 }
                 return 0;
             };
             recall();
         })
     </script>
+    <div class="modal fade" id="tooMuchInvites" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Erreur</h4>
+                </div>
+                <div class="modal-body">
+                    Vous ne pouvez pas avoir plus de 7 invités.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer ce message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="tooMuchPlace" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Erreur</h4>
+                </div>
+                <div class="modal-body">
+                    Vous ne pouvez pas prendre à la fois une place soirée et une place repas pour vous.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer ce message</button>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
