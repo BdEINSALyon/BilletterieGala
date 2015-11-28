@@ -13,7 +13,46 @@
         document.domain = "bde-insa-lyon.fr";
         window.userToken = "{{ token }}";
     </script>
+    <div class="hide" id="popup-content">
+        <div onclick="$('.security_info_wrapper').fadeOut(2)" id="security_info_close">x</div>
+        <p>Vous êtes sur un espace sécurisé utilisant un protocle SSL de cryptage de vos données, certifié par Comodo.
+            Vous pouvez en vérifier la validité en cliquant sur l'icône du certificat Comodo.</p>
+
+        <p>Ce protocole de sécurité utilise également la norme HTTPS (au lieu du HTTP)
+            depuis les serveurs de bde-insa-lyon.fr.</p>
+
+        <p>Si votre banque l'a activé, le paiement s'effectuera par 3DSecure. Cela garantie la transaction, un code vous
+            sera demandé par votre banque.</p>
+
+        <div class="logo_block" style="padding-left: 65px">
+            <div id="block_cic"></div>
+            <div id="block_visa"></div>
+            <div id="block_master"></div>
+            <div onclick="window.open('https://secure.comodo.com/ttb_searcher/trustlogo?v_querytype=W&v_shortname=CL1&v_search=https://weezevent.bde-insa-lyon.fr/&x=6&y=5')"
+                 style="background: url('https://ssl.comodo.com/images/trustlogo/comodo_secure_113x59_transp.png');height: 59px;width:113px; margin-top: -20px; margin-bottom: auto"></div>
+        </div>
+    </div>
     <script>
+        var trustLogo = '<script language="JavaScript" type="text/javascript">' + 'TrustLogo("https://weezevent.bde-insa-lyon.fr/comodo.png", "CL1", "none");' + '<' + '/script>' + '<a  href="https://www.positivessl.com/" id="comodoTL">Positive SSL</a>';
+
+        $(function () {
+            var trustSection = function () {
+                try {
+                    var $2 = $($("iframe")[0].contentDocument);
+                    var $content = $('#popup-content');
+                    if ($content.html() != $2.find('#security_info_popin').html())
+                        $2.find('#security_info_popin').html($content.html());
+                } catch (ex) {
+                    console.log("Cross-Domain Exception");
+                }
+                return 0;
+            };
+            var recall = function () {
+                if (!trustSection())
+                    setTimeout(recall, 500);
+            };
+            recall();
+        });
         $(function () {
             var testBuy = function () {
                 try {
@@ -32,13 +71,55 @@
                     console.log("Cross-Domain Exception");
                 }
                 return 0;
-            }
+            };
             window.checkBuy = true;
             var recall = function () {
                 if (!testBuy() && window.checkBuy)
                     setTimeout(recall, 500);
-            }
-            recall()
+            };
+            recall();
+        });
+        $(function () {
+            var recall = function () {
+                if (!hookForm())
+                    setTimeout(recall, 500);
+            };
+            var hookForm = function () {
+                try {
+                    var $2 = $($("iframe")[0].contentDocument);
+                    var test = $2.find("#submitTicketForm").length;
+                    test += $2.find("input[name='current_step']").length == 'tickets';
+                    if (test > 0) {
+                        var form = $2.find("#FormBilleterie");
+                        form.find(".bloc_liste_billets").show();
+                        form.find(".picto_cat").hide();
+
+                        // Mange hidden products
+                        var type = "{{ participant.type.name }}" == "Diplomé" ? 1 : 0;
+                        var hide = [];
+                        switch (type) {
+                            case 0:
+                                hide = ["ticket_table_642053", "ticket_table_632275", "ticket_table_641927", "ticket_table_632253"];
+                                break;
+                            default:
+                                hide = ["ticket_table_645592", "ticket_table_645590"];
+                        }
+
+                        hide.forEach(function (value) {
+                            form.find("#" + value).hide();
+                        });
+
+                        $2.find("#submitTicketForm").click(function () {
+                            setTimeout(recall, 1000);
+                        });
+                        return 1;
+                    }
+                } catch (ex) {
+                    console.log(ex);
+                }
+                return 0;
+            };
+            recall();
         })
     </script>
 {% endblock %}
