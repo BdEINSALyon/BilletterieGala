@@ -1,0 +1,44 @@
+{% extends "::public.html.twig" %}
+
+{% block title %}//Billetterie{% endblock %}
+
+{% block content %}
+    <a title="Logiciel billetterie en ligne" href="https://www.weezevent.com//?c=sys_widget"
+       class="weezevent-widget-integration" target="_blank"
+       data-src="https://weezevent.bde-insa-lyon.fr/widget_billeterie.php?id_evenement=141223&amp;lg_billetterie=1&amp;code=10202&amp;resize=1&amp;width_auto=1&amp;color_primary=52bdb6"
+       data-width="650" data-height="600" data-id="141223" data-resize="1" data-width_auto="1" data-noscroll="1"
+       data-nopb="1">Billetterie Weezevent</a>
+    <script type="text/javascript" src="{{ asset("bundles/bderevent/js/widget.js") }}"></script>
+    <script>
+        document.domain = "bde-insa-lyon.fr";
+        window.userToken = "{{ token }}";
+    </script>
+    <script>
+        $(function () {
+            var testBuy = function () {
+                try {
+                    var $2 = $($("iframe")[0].contentDocument);
+                    var test = $2.find(".downloadTicketButton").length;
+                    test += $2.find(".message_confirmation_title").length;
+                    test += $2.find("#big_check").length;
+                    if (test > 0) {
+                        console.log("Achat fini!");
+                        $.post("{{ url('end_payment', {key: token}, true) }}", function (data) {
+                            console.log(data);
+                        });
+                        return 1;
+                    }
+                } catch (ex) {
+                    console.log("Cross-Domain Exception");
+                }
+                return 0;
+            }
+            window.checkBuy = true;
+            var recall = function () {
+                if (!testBuy() && window.checkBuy)
+                    setTimeout(recall, 500);
+            }
+            recall()
+        })
+    </script>
+{% endblock %}
