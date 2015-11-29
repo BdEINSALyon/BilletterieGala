@@ -20,7 +20,9 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "braincrafted/bootstrap-bundle": "v2.1.2",
         "twbs/bootstrap": "3.0.*",
-        "jquery/jquery":  "1.11.*"
+        "jquery/jquery": "1.11.*",
+        "mailgun/mailgun-php": "~1.7.2",
+        "soundasleep/html2text": "~0.2"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

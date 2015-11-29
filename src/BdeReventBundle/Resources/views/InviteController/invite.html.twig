@@ -1,6 +1,31 @@
 {% extends "::public.html.twig" %}
 
-{% block title %}//Invitez{% endblock %}
+{% block title %}Invitez{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        div.invite {
+            width: 650px;
+            margin: 0 auto;
+        }
+
+        div.submit-button {
+            width: 150px;
+            margin: 0 auto;
+        }
+
+        div.invite .form-group {
+            margin-left: 5px;
+            margin-right: 5px;
+            margin-top: 10px;
+        }
+
+        ul.text-error {
+            margin-bottom: 0;
+        }
+    </style>
+{% endblock %}
 
 {% block content %}
     <div class="row">
@@ -12,6 +37,34 @@
             </div>
             <p>Pour inviter une personne, renseignez son nom, prénom et adresse email et nous lui enverrons un mail
                 d'invitation de votre part.</p>
+
+            <div style="text-align: center">
+                Vous avez déjà invité {{ invited }} personne{{ invited>1?"s":"" }}
+            </div>
+        </div>
+        <div class="col-md-12">
+            {{ form_start(form,{attr:{novalidate:true }}) }}
+            {% for invite in form %}
+                <div class="form-inline invite {% if errors[invite.vars.name] is defined %}has-error{% endif %}">
+                    {% if errors[invite.vars.name] is defined %}
+                        <div class="text-error text-danger">
+                            Erreurs&nbsp;:&nbsp;
+                            {% set c=0 %}
+                            {% for invite_errors in errors[invite.vars.name] %}
+                                {% for error in invite_errors %}
+                                    {% if c == 1 %} - {% endif %}{{ error.message }}
+                                    {% set c=1 %}
+                                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    {{ form_row(invite, { 'style': 'inline' }) }}
+                </div>
+            {% endfor %}
+            <div class="submit-button">
+                <button type="submit" class="btn btn-primary btn-block">INVITER</button>
+            </div>
+            {{ form_end(form) }}
         </div>
     </div>
 {% endblock %}

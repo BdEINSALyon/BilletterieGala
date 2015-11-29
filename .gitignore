@@ -45,6 +45,7 @@
 /web/bundles/
 /web/uploads/
 /web/css/
+!web/css/style.css
 /web/js/
 
 

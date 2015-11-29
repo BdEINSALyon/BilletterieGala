@@ -10,6 +10,8 @@ namespace BdeReventBundle\Mail;
 use BdeReventBundle\Entity\Mail;
 use BdeReventBundle\Entity\Participant;
 use Doctrine\ORM\EntityManager;
+use Html2Text\Html2Text;
+use Mailgun\Mailgun;
 use Symfony\Component\Routing\Router;
 
 /**
@@ -23,6 +25,10 @@ class MailerService
     private $_twig;
     private $_router;
     private $_website;
+    /**
+     * @var Mailgun
+     */
+    private $mailgun;
 
     /**
      * MailerService constructor.
@@ -30,13 +36,28 @@ class MailerService
      * @param EntityManager $_em
      * @param \Twig_Environment $_twig
      */
-    public function __construct(TokenService $_service, $website, EntityManager $_em, \Twig_Environment $_twig, Router $router)
+    public function __construct(TokenService $_service, $website, EntityManager $_em, \Twig_Environment $_twig, Router $router, $mailgun_api_key, $mailgun_domain)
     {
         $this->_service = $_service;
         $this->_website = $website;
         $this->_em = $_em;
         $this->_twig = $_twig;
         $this->_router = $router;
+        $this->mailgun_domain = $mailgun_domain;
+        $this->mailgun = new Mailgun($mailgun_api_key);
+    }
+
+    public function send(Participant $participant)
+    {
+        $mail = $this->_em->getRepository('BdeReventBundle:Mail')->findOneBy(array('type' => $participant->getType()));
+        $content = $this->generateMailFromData($mail, $participant);
+        $this->mailgun->sendMessage($this->mailgun_domain, array(
+            'from' => 'accueil@gala.bde-insa-lyon.fr',
+            'to' => $participant->getEmail(),
+            'subject' => $content['subject'],
+            'body-text' => Html2Text::convert($content['body']),
+            'body-html' => $content['body']
+        ));
     }
 
     public function generateMailFromData(Mail $mail, Participant $participant)

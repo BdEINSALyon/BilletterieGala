@@ -27,14 +27,14 @@ class Participant
      *
      * @ORM\Column(name="first_name", type="string", length=255)
      */
-    private $firstName;
+    private $firstName = "";
 
     /**
      * @var string
      *
      * @ORM\Column(name="last_name", type="string", length=255)
      */
-    private $lastName;
+    private $lastName = "";
 
     /**
      * @var string
@@ -55,7 +55,7 @@ class Participant
      *
      * @ORM\Column(name="used", type="boolean")
      */
-    private $used;
+    private $used = false;
 
     /**
      * @var ArrayCollection
@@ -69,7 +69,7 @@ class Participant
      *
      * @ORM\Column(name="weezevent_invites", type="integer")
      */
-    private $guests_by_weezevent;
+    private $guests_by_weezevent = 0;
 
     /**
      * @var Participant
@@ -254,6 +254,14 @@ class Participant
     public function setGuestsByWeezevent($guests_by_weezevent)
     {
         $this->guests_by_weezevent = $guests_by_weezevent;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getGuests()
+    {
+        return $this->guests;
     }
 }
 
