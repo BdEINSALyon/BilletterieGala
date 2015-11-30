@@ -42,6 +42,7 @@
                 Vous avez déjà invité {{ invited }} personne{{ invited>1?"s":"" }}
             </div>
         </div>
+        {% if invited<7 %}
         <div class="col-md-12">
             {{ form_start(form,{attr:{novalidate:true }}) }}
             {% for invite in form %}
@@ -66,5 +67,37 @@
             </div>
             {{ form_end(form) }}
         </div>
+
+        {% else %}
+            <div class="col-md-12 text-warning" style="text-align: center">
+                Vous avez atteint le nombre maximal d'invités
+            </div>
+        {% endif %}
+        <!--<div class="col-md-12">
+            <div class="page-header">
+                <h1>Récupérer mon billet
+                    <small>Si vous l'avez perdu</small>
+                </h1>
+            </div>
+            <p>Vous pouvez vous faire renvoyer votre billet en cliquant sur le lien :</p>
+            <script>
+                function send_mail(email){
+                    $.ajax({
+                        type: "POST",
+                        url: "https://weezevent.bde-insa-lyon.fr/bo/ajax/resendTicket.php",
+                        data: {
+                            email: email,
+                            event_id: '141223',
+                            lang_id: 'fr'
+                        },
+                        dataType: 'json',
+                        success: function (msg) {
+                            alert("Mail envoyé")
+                        }
+                    });
+                }
+            </script>
+            <div style="width:150px; margin: 0 auto;"><div class="btn btn-primary" onclick="send_mail('{{ participant.email }}')">Envoyez mon billet</div></div>
+        </div>-->
     </div>
 {% endblock %}

@@ -13,16 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 class InviteControllerController extends Controller
 {
     /**
-     * @Route("/")
-     * @Template()
-     */
-    public function indexAction()
-    {
-        return array(// ...
-        );
-    }
-
-    /**
      * @Route("/{key}/endPayment", name="end_payment")
      * @param Request $request
      * @param $key
@@ -145,7 +135,7 @@ class InviteControllerController extends Controller
             return array(
                 'participant' => $participant,
                 'token' => $key,
-                'invited' => $max_invites - $addable_invites,
+                'invited' => $max_invites - $addable_invites + $weezevent_invites,
                 'form' => $formView,
                 'errors' => $form->getErrors(true, 2)
             );

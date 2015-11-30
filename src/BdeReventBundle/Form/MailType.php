@@ -20,7 +20,7 @@ class MailType extends AbstractType
         $builder
         ->add('type')
         ->add('object')
-            ->add('message', null, array('required' => false))
+            ->add('message', null, array('required' => false, 'attr' => array('rows' => 30)))
             ->add('save', 'submit', array(
                 'attr' => array('class' => 'save'),
             ));

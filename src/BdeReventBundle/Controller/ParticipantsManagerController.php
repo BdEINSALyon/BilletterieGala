@@ -44,6 +44,7 @@ class ParticipantsManagerController extends Controller
             $em = $this->get('doctrine.orm.default_entity_manager');
             $em->persist($participant);
             $em->flush($participant);
+            $this->get('bde.main.mailer_service')->send($participant);
             return $this->redirectToRoute('participants_index');
         }
 
@@ -119,14 +120,8 @@ class ParticipantsManagerController extends Controller
         if ($participant == null) {
             throw $this->createNotFoundException('Participant introuvable!');
         }
-        $mail = $this->get('doctrine.orm.entity_manager')->getRepository('BdeReventBundle:Mail')->findOneBy(array(
-            'type' => $participant->getType()
-        ));
-        $mail = $this->get('bde.main.mailer_service')->generateMailFromData($mail, $participant);
-
-        return array(
-            'message' => $mail['body']
-        );
+        $this->get('bde.main.mailer_service')->send($participant);
+        return $this->redirectToRoute('participants_index');
     }
 
 }

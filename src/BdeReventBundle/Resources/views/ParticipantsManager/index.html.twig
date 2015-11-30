@@ -41,6 +41,8 @@
                         <td><div class="btn-group" role="group">
                                 <a href="{{ url("return_mail",{key:invite_token(participant)}) }}"
                                    class="btn btn-primary">{{ icon('link') }}</a>
+                                <a href="{{ url("bderevent_participantsmanager_resendmail",{id:participant.id}) }}"
+                                   class="btn btn-primary">{{ icon('envelope') }}</a>
                                 <a href="{{ url("bderevent_participantsmanager_edit",{id:participant.id}) }}" class="btn btn-primary">{{ icon('edit') }}</a>
                                 <a href="{{ url("bderevent_participantsmanager_delete",{id:participant.id}) }}" class="btn btn-danger">{{ icon('trash') }}</a>
                             </div></td>

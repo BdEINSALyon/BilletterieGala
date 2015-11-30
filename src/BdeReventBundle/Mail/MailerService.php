@@ -55,8 +55,8 @@ class MailerService
             'from' => 'accueil@gala.bde-insa-lyon.fr',
             'to' => $participant->getEmail(),
             'subject' => $content['subject'],
-            'body-text' => Html2Text::convert($content['body']),
-            'body-html' => $content['body']
+            'text' => Html2Text::convert($content['body']),
+            'html' => $content['body']
         ));
     }
 
