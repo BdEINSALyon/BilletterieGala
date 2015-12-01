@@ -65,6 +65,10 @@
                         $.post("{{ url('end_payment', {key: token}, true) }}", {nbInvite: window.nbInvites}, function (data) {
                             console.log(data);
                         });
+                        var $invite = $("#invite");
+                        $invite.hide();
+                        $invite.removeClass("hide");
+                        $invite.fadeIn(1500);
                         return 1;
                     }
                 } catch (ex) {
@@ -208,5 +212,8 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="col-md-2 hide col-md-offset-5" id="invite">
+        <a href="{{ path('invite', {'key': token}) }}" class="btn btn-primary">Inviter des proches</a>
     </div>
 {% endblock %}
