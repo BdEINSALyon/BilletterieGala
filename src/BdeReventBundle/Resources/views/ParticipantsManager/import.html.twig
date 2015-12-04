@@ -67,9 +67,9 @@
 
             function sendBuffer(data, start) {
                 if (data.length >= start) {
-                    $bar.width(((start / data.length) * 80 + 20) + '%');
+                    $bar.width(((start / data.length) * 95 + 5) + '%');
                     $bar.text(Math.round((start / data.length) * 100) + '%');
-                    $.post("", {data: data.slice(start, start + 9)}, function (result) {
+                    $.post("", {data: data.slice(start, start + 10)}, function (result) {
                         console.log(result);
                         sendBuffer(data, start + 10);
                     })
