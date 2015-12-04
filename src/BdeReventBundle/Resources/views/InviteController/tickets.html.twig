@@ -148,7 +148,10 @@
                         var checkAndStore = function () {
                             var sum = 0;
                             $quantitySelect.each(function (id, select) {
-                                sum += parseInt($(select).val());
+                                var value = parseInt($(select).val());
+                                if ($(select).attr('id') == "quantite_632277")
+                                    value = value * 2;
+                                sum += value;
                                 console.log(sum);
                             });
                             if (sum > maxTicket) {
