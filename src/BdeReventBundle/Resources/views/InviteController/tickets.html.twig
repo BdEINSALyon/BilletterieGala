@@ -33,8 +33,6 @@
         </div>
     </div>
     <script>
-        var trustLogo = '<script language="JavaScript" type="text/javascript">' + 'TrustLogo("https://weezevent.bde-insa-lyon.fr/comodo.png", "CL1", "none");' + '<' + '/script>' + '<a  href="https://www.positivessl.com/" id="comodoTL">Positive SSL</a>';
-
         $(function () {
             var trustSection = function () {
                 try {
@@ -110,62 +108,60 @@
                             });
                         };
 
+                        // Demande de fagot :
+                        $2.find(".close").unbind("click");
+                        $2.find(".close").hide();
+                        $2.find(".ticket_table_header").hide();
+                        $2.find(".ticket_table_header").first().show();
+
                         // Mange hidden products
                         var type = "{{ participant.type.name }}" == "Diplomé" ? 1 : 0;
                         var hide = [];
+                        var maxTicket = 0;
+                        var $errorMaxModal = $("#tooMuchPlace");
+                        var $quantitySelect = $2.find(".quantitySelect");
                         switch (type) {
                             case 0:
-                                hide = ["ticket_table_642053", "ticket_table_632275", "ticket_table_641927", "ticket_table_632253"];
-                                // Gestion du nombre maximal d'invités
-                                var invit1 = $2.find('#quantite_645592');
-                                var invit2 = $2.find('#quantite_645590');
-                                var checkAndStore2 = function () {
-                                    if (parseInt($(invit1).val()) + parseInt($(invit2).val()) > 1) {
-                                        $(invit1).val(0);
-                                        $(invit2).val(0);
-                                        updateAmountTickets();
-                                        $('#tooMuchPlace').modal()
-                                    }
-                                };
-                                $(invit1).change(checkAndStore2);
-                                $(invit2).change(checkAndStore2);
+                                hide = [
+                                    "642053",
+                                    "632275",
+                                    "650035"/* MD */,
+                                    "650036"/* M1 */,
+                                    "641927"/* Pack LD */,
+                                    "632253"/* Pack L1 */,
+                                    "642074",
+                                    "632277"/* Pack XXL */
+                                ];
+                                maxTicket = 1;
+                                $errorMaxModal = $("#tooMuchPlaceGuest");
+                                $2.find("#ticket_table_632276").find(".billetterie_tb_nom").contents().filter(function () {
+                                    return this.nodeType == 3
+                                }).each(function () {
+                                    this.textContent = this.textContent.replace(' (1 personne invité)', '');
+                                });
                                 break;
                             default:
-                                hide = ["ticket_table_645592", "ticket_table_645590"];
-                                // Gestion du nombre maximal d'invités
-                                var invitRepas = $2.find('#quantite_632275');
-                                var invitSoiree = $2.find('#quantite_632253');
-                                var diplomeSoiree = $2.find('#quantite_641927');
-                                var diplomeRepas = $2.find('#quantite_642053');
-                                var checkAndStore = function () {
-                                    window.nbInvites = parseInt($(invitRepas).val()) + parseInt($(invitSoiree).val());
-                                    if (window.nbInvites > 7) {
-                                        $(invitRepas).val(0);
-                                        $(invitSoiree).val(0);
-                                        updateAmountTickets();
-                                        $('#tooMuchInvites').modal()
-                                    }
-                                    if (parseInt($(diplomeRepas).val()) + parseInt($(diplomeSoiree).val()) > 1) {
-                                        $(diplomeRepas).val(0);
-                                        $(diplomeSoiree).val(0);
-                                        updateAmountTickets();
-                                        $('#tooMuchPlace').modal()
-                                    }
-                                };
-                                $(invitRepas).change(checkAndStore);
-                                $(invitSoiree).change(checkAndStore);
-                                $(diplomeRepas).change(checkAndStore);
-                                $(diplomeSoiree).change(checkAndStore);
+                                hide = ["645592", "645590", "650038", "632276"];
+                                maxTicket = 8;
+                                $errorMaxModal = $("#tooMuchPlaceGraduate");
                         }
+                        var checkAndStore = function () {
+                            var sum = 0;
+                            $quantitySelect.each(function (id, select) {
+                                sum += parseInt($(select).val());
+                                console.log(sum);
+                            });
+                            if (sum > maxTicket) {
+                                $quantitySelect.val(0);
+                                updateAmountTickets();
+                                $errorMaxModal.modal()
+                            }
+                        };
+                        $quantitySelect.change(checkAndStore);
 
                         hide.forEach(function (value) {
-                            form.find("#" + value).hide();
+                            $2.find("#ticket_table_" + value).hide();
                         });
-
-
-                        $2.find('#quantite_632275').change(function (e) {
-                            console.log($(e.target).val());
-                        })
 
                         $2.find("#submitTicketForm").click(function () {
                             setTimeout(recall, 1000);
@@ -205,7 +201,37 @@
                     <h4 class="modal-title" id="myModalLabel">Erreur</h4>
                 </div>
                 <div class="modal-body">
-                    Vous ne pouvez pas prendre à la fois une place soirée et une place repas pour vous.
+                    Vous avez atteint la limite de place !
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer ce message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="tooMuchPlaceGuest" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Erreur</h4>
+                </div>
+                <div class="modal-body">
+                    Vous ne pouvez pas prendre prendre plus d'une place en tant qu'invité
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fermer ce message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="tooMuchPlaceGraduate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Erreur</h4>
+                </div>
+                <div class="modal-body">
+                    Vous ne pouvez pas prendre plus de 8 billets (1 pour vous et 7 invités)
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Fermer ce message</button>

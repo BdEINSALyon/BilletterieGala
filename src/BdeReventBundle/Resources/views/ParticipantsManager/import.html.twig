@@ -1,0 +1,79 @@
+{% extends "::admin.html.twig" %}
+
+{% block title %}Participants{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <h1>{% block head_title %}Importer{% endblock %}
+                <small>{% block head_small %}Importer des participants{% endblock %}</small>
+
+                <div class="pull-right">
+                    <div class="btn-group" style="">
+                        <a class="btn btn-success" href="#" id="launchBtn">Lancer {{ icon("play-circle") }}</a>
+                    </div>
+                </div>
+            </h1>
+        </div>
+        <div class="row">
+            <form class="form-inline">
+                <div class="form-group col-md-10 row">
+                    <label class="col-md-2" style="height: 20px;margin: 7px auto" for="file">Fichier : </label>
+
+                    <div class="col-md-10">
+                        <input type="file" class="form-control" style="width: 100%" id="file">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" id="loadFile" class="btn btn-default">Charger le fichier</button>
+                </div>
+            </form>
+        </div>
+        <div class="row" style="margin-top: 15px;">
+            <table class="table" id="resultTable">
+
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/bderevent/js/jquery.csv-0.71.min.js') }}"></script>
+    <script src="{{ asset('bundles/bderevent/js/csv-fill.js') }}"></script>
+    <script>
+        $(function () {
+            var data = {};
+            $('#loadFile').click(function () {
+                readFile($("#file").first()[0], function (e) {
+                    data = $.csv.toObjects(e.target.result);
+                    var table = $('#resultTable');
+                    table.empty();
+                    fillArray(data, table);
+                });
+            });
+            function sendBuffer(buffer) {
+                $.post("", {data: buffer}, function (result) {
+                    console.log(buffer);
+                })
+            }
+
+            var isSending = false;
+            $("#launchBtn").click(function () {
+                if (isSending)
+                    return;
+                isSending = true;
+                var buffer = [];
+                data.forEach(function (value, index) {
+                    if (buffer.length >= 10) {
+                        sendBuffer(buffer);
+                        buffer = [];
+                    }
+                    buffer.push(value);
+                });
+                if (buffer.length > 0)
+                    sendBuffer(buffer);
+            });
+        })
+    </script>
+{% endblock %}

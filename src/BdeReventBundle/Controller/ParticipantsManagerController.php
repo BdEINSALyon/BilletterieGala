@@ -124,4 +124,13 @@ class ParticipantsManagerController extends Controller
         return $this->redirectToRoute('participants_index');
     }
 
+    /**
+     * @Route("/import")
+     * @Template()
+     */
+    public function importAction()
+    {
+        return array();
+    }
+
 }
