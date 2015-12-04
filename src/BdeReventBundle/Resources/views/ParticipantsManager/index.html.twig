@@ -9,7 +9,9 @@
 
             <div class="pull-right">
                 <div class="btn-group" style="">
-                    <a class="btn btn-success" href="{{ url("bderevent_participantsmanager_add") }}">Ajouter</a>
+                    <a class="btn btn-primary" href="{{ url("bderevent_participantsmanager_import") }}">Importer</a>
+                    <a class="btn btn-success" style="margin-left: 15px"
+                       href="{{ url("bderevent_participantsmanager_add") }}">Ajouter</a>
                 </div>
             </div>
         </h1>
@@ -52,4 +54,22 @@
             </table>
         </div>
     </div>
+    <script>$(function () {
+            $('#table_participants')
+                    .removeClass('display')
+                    .addClass('table table-striped table-bordered');
+        })</script>
+{% endblock %}
+
+{% block stylesheets %}
+
+
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/r/bs-3.3.5/jqc-1.11.3,dt-1.10.8/datatables.min.js"></script>
+    {{ parent() }}
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            $('#table_participants').DataTable();
+        });
+    </script>
 {% endblock %}

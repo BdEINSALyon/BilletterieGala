@@ -10,29 +10,37 @@
 
                 <div class="pull-right">
                     <div class="btn-group" style="">
-                        <a class="btn btn-success" href="#" id="launchBtn">Lancer {{ icon("play-circle") }}</a>
+                        <a class="btn btn-success" href="#" id="launchBtn"
+                           style="display: none">Lancer {{ icon("play-circle") }}</a>
                     </div>
                 </div>
             </h1>
         </div>
-        <div class="row">
-            <form class="form-inline">
-                <div class="form-group col-md-10 row">
-                    <label class="col-md-2" style="height: 20px;margin: 7px auto" for="file">Fichier : </label>
+        <div id="form">
+            <div class="row" id="loadForm">
+                <form class="form-inline">
+                    <div class="form-group col-md-10 row">
+                        <label class="col-md-2" style="height: 20px;margin: 7px auto" for="file">Fichier : </label>
 
-                    <div class="col-md-10">
-                        <input type="file" class="form-control" style="width: 100%" id="file">
+                        <div class="col-md-10">
+                            <input type="file" class="form-control" style="width: 100%" id="file">
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-2">
-                    <button type="button" id="loadFile" class="btn btn-default">Charger le fichier</button>
-                </div>
-            </form>
-        </div>
-        <div class="row" style="margin-top: 15px;">
-            <table class="table" id="resultTable">
+                    <div class="col-md-2">
+                        <button type="button" id="loadFile" class="btn btn-default">Charger le fichier</button>
+                    </div>
+                </form>
+            </div>
+            <div class="row" style="margin-top: 15px;">
+                <table class="table" id="resultTable">
 
-            </table>
+                </table>
+            </div>
+        </div>
+        <div style="display: none" id="load" class="container">
+            <div style="width: 400px; margin: 10px auto;" id="progress" class="progress progress-striped active">
+                <div id="loadBar" class="progress-bar" style="width: 0%;"></div>
+            </div>
         </div>
     </div>
 {% endblock %}
@@ -50,29 +58,44 @@
                     var table = $('#resultTable');
                     table.empty();
                     fillArray(data, table);
+                    $("#launchBtn").show();
+                    $("#loadForm").hide();
                 });
             });
-            function sendBuffer(buffer) {
-                $.post("", {data: buffer}, function (result) {
-                    console.log(buffer);
-                })
+            var $bar = $('#loadBar');
+            var $progress = $('#progress');
+
+            function sendBuffer(data, start) {
+                if (data.length >= start) {
+                    $bar.width(((start / data.length) * 80 + 20) + '%');
+                    $bar.text(Math.round((start / data.length) * 100) + '%');
+                    $.post("", {data: data.slice(start, start + 10)}, function (result) {
+                        console.log(result);
+                        sendBuffer(data, start + 10);
+                    })
+                } else {
+                    $bar.width('100%');
+                    $bar.text("Terminé");
+                    $progress.removeClass('active');
+                    $progress.removeClass('progress-striped');
+                    $("#launchBtn").hide();
+                    setTimeout(function () {
+                        $("#loadForm").show();
+                        $("#form").show();
+                        $("#load").hide();
+                        isSending = false;
+                    }, 20000)
+                }
             }
 
             var isSending = false;
             $("#launchBtn").click(function () {
                 if (isSending)
                     return;
+                $("#form").hide();
+                $('#load').fadeIn(2000);
                 isSending = true;
-                var buffer = [];
-                data.forEach(function (value, index) {
-                    if (buffer.length >= 10) {
-                        sendBuffer(buffer);
-                        buffer = [];
-                    }
-                    buffer.push(value);
-                });
-                if (buffer.length > 0)
-                    sendBuffer(buffer);
+                sendBuffer(data, 0);
             });
         })
     </script>

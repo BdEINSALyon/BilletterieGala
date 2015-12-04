@@ -7,6 +7,7 @@ use BdeReventBundle\Form\ParticipantType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -128,8 +129,29 @@ class ParticipantsManagerController extends Controller
      * @Route("/import")
      * @Template()
      */
-    public function importAction()
+    public function importAction(Request $request)
     {
+        if ($request->isMethod("POST")) {
+            $em = $this->get("doctrine.orm.entity_manager");
+            $status = 1;
+            try {
+                $data = ($request->get("data"));
+                foreach ($data as $guest) {
+                    $participant = new Participant();
+                    $participant->setType($em->getRepository("BdeReventBundle:Type")->findOneByName('Diplômé'));
+                    $participant->setEmail($guest['email']);
+                    $participant->setFirstName($guest['firstname']);
+                    $participant->setLastName($guest['lastname']);
+                    $em->persist($participant);
+                    $em->flush($participant);
+                    $this->get('bde.main.mailer_service')->send($participant);
+                }
+            } catch (Exception $e) {
+                $status = 0;
+            }
+            echo $status;
+            exit;
+        }
         return array();
     }
 
