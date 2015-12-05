@@ -63,7 +63,7 @@ class InviteControllerController extends Controller
         }
         if ($participant->getUsed()) {
             if ($participant->getType()->getCanInvite())
-                $this->addFlash('info', 'Vous avez déjà achetez vos places, mais vous pouvez inviter vos proches !');
+                $this->addFlash('info', 'Vous avez déjà acheté vos places, mais vous pouvez inviter vos proches !');
             return $this->redirectToRoute('invite', array('key' => $key));
         }
         return array(
