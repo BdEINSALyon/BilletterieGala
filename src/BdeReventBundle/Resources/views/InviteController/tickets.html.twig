@@ -152,7 +152,7 @@
                                 if ($(select).attr('id') == "quantite_632277")
                                     value = value * 2;
                                 sum += value;
-                                console.log(sum);
+                                window.nbInvites = (sum - 1);
                             });
                             if (sum > maxTicket) {
                                 $quantitySelect.val(0);
