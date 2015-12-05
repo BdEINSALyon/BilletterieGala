@@ -68,6 +68,12 @@ class InviteControllerController extends Controller
         }
         return array(
             'participant' => $participant,
+            'pjson' => json_encode(array(
+                "id" => $participant->getId(),
+                "firstname" => $participant->getFirstName(),
+                "lastname" => $participant->getLastName(),
+                "email" => $participant->getEmail(),
+            )),
             'token' => $key
         );
     }

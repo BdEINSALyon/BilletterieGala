@@ -33,6 +33,7 @@
         </div>
     </div>
     <script>
+        var participant = {{ pjson|raw }};
         $(function () {
             var trustSection = function () {
                 try {
@@ -85,6 +86,21 @@
                 if (!hookForm())
                     setTimeout(recall, 500);
             };
+            var informationHook = function () {
+                try {
+                    var $2 = $($("iframe")[0].contentDocument);
+                    if ($2.find("input[name='current_step']").val() == 'form') {
+                        $2.find("#champs_3_0").val(participant.firstname);
+                        $2.find("#champs_2_0").val(participant.lastname);
+                        $2.find("#champs_5_0").val(participant.email);
+                        $2.find("#champs_5_0").after('<span class="text-info" style="color:green; margin-top: 5px">Les billets seront envoyés à cette adresse</span>');
+                        $2.find("#champs_36_0").val(participant.email);
+                    }
+                } catch (e) {
+
+                }
+            };
+            $('iframe:first').load(informationHook);
             var hookForm = function () {
                 try {
                     var $2 = $($("iframe")[0].contentDocument);
