@@ -23,7 +23,7 @@
 
         <p>Si votre banque l'a activé, le paiement s'effectuera par 3DSecure. Cela garantie la transaction, un code vous
             sera demandé par votre banque.</p>
-
+        <span style="display: none">BdE INSA Lyon</span>
         <div class="logo_block" style="padding-left: 65px">
             <div id="block_cic"></div>
             <div id="block_visa"></div>
@@ -38,35 +38,38 @@
                 try {
                     var $2 = $($("iframe")[0].contentDocument);
                     var $content = $('#popup-content');
-                    if ($content.html() != $2.find('#security_info_popin').html())
+                    if (!$2.find('#security_info_popin').html().includes("BdE INSA Lyon")) {
+                        $2.find("#venteSupenduesOrgaInfo").hide();
+                        $2.find(".flags").hide();
+                        $2.find('#security_info_popin').attr("style", 'height:250px');
                         $2.find('#security_info_popin').html($content.html());
+                    }
                 } catch (ex) {
                 }
                 return 0;
             };
-            var recall = function () {
-                if (!trustSection())
-                    setTimeout(recall, 500);
-            };
-            recall();
+            $('iframe').load(trustSection);
         });
         $(function () {
             var testBuy = function () {
                 try {
                     var $2 = $($("iframe")[0].contentDocument);
-                    $2.find("#venteSupenduesOrgaInfo").hide();
                     var test = $2.find(".downloadTicketButton").length;
                     test += $2.find(".message_confirmation_title").length;
                     test += $2.find("#big_check").length;
                     if (test > 0) {
+                        $2.find("#venteSupenduesOrgaInfo").hide();
                         console.log("Achat fini!");
                         $.post("{{ url('end_payment', {key: token}, true) }}", {nbInvite: window.nbInvites}, function (data) {
                             console.log(data);
                         });
-                        var $invite = $("#invite");
-                        $invite.hide();
-                        $invite.removeClass("hide");
-                        $invite.fadeIn(1500);
+
+                        if ("{{ participant.type.canInvite }}" == "1") {
+                            var $invite = $("#invite");
+                            $invite.hide();
+                            $invite.removeClass("hide");
+                            $invite.fadeIn(1500);
+                        }
                         return 1;
                     }
                 } catch (ex) {
@@ -74,11 +77,7 @@
                 return 0;
             };
             window.checkBuy = true;
-            var recall = function () {
-                if (!testBuy() && window.checkBuy)
-                    setTimeout(recall, 500);
-            };
-            setTimeout(recall, 500);
+            $('iframe').load(testBuy);
         });
         window.nbInvites = 0;
         $(function () {
@@ -115,7 +114,7 @@
                         $2.find(".ticket_table_header").first().show();
 
                         // Mange hidden products
-                        var type = "{{ participant.type.name }}" == "Diplômé" ? 1 : 0;
+                        var type = "{{ participant.type.canInvite }}" == "1" ? 1 : 0;
                         var hide = [];
                         var maxTicket = 0;
                         var $errorMaxModal = $("#tooMuchPlace");
@@ -165,13 +164,8 @@
                         hide.forEach(function (value) {
                             $2.find("#ticket_table_" + value).hide();
                         });
-
-                        $2.find("#submitTicketForm").click(function () {
-                            setTimeout(recall, 1000);
-                        });
                         form.submit(function (e) {
                             e.preventDefault();
-                            setTimeout(recall, 1000);
                         });
                         return 1;
                     }
@@ -179,7 +173,7 @@
                 }
                 return 0;
             };
-            recall();
+            $('iframe').load(hookForm);
         })
     </script>
     <div class="modal fade" id="tooMuchInvites" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
