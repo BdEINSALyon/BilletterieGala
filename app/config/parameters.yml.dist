@@ -21,3 +21,6 @@ parameters:
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
+
+    google.account_id: "UA-71047487-2"
+    google.domain: "billets.gala.bde-insa-lyon.fr"

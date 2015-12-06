@@ -22,7 +22,8 @@
         "twbs/bootstrap": "3.0.*",
         "jquery/jquery": "1.11.*",
         "mailgun/mailgun-php": "~1.7.2",
-        "soundasleep/html2text": "~0.2"
+        "soundasleep/html2text": "~0.2",
+        "antimattr/google-bundle": "~2.0@stable"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
