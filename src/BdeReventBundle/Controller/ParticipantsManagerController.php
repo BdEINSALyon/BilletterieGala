@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Class ParticipantsManagerController
@@ -108,6 +109,53 @@ class ParticipantsManagerController extends Controller
         return array(
             'form' => $form->createView(),
         );
+    }
+
+    /**
+     * @Route("/export")
+     */
+    public function exportAction()
+    {
+        $response = new StreamedResponse();
+        $response->setCallback(function () {
+
+            $handle = fopen('php://output', 'w+');
+
+            // Add the header of the CSV file
+            fputcsv($handle, array('id', 'firstname', 'lastname', 'email', 'invited_by', 'invited_by_firstname', 'invited_by_lastname', 'invited_by_email'), ';');
+
+            // Add the data queried from database
+            foreach ($this->get("doctrine.orm.entity_manager")->getRepository("BdeReventBundle:Participant")->findBy(array('used' => true)) as $p) {
+                $v = array();
+                $v[] = $p->getId();
+                $v[] = $p->getFirstName();
+                $v[] = $p->getLastName();
+                $v[] = $p->getEmail();
+                if ($p->getInvitedBy() != null) {
+                    $v[] = $p->getInvitedBy()->getId();
+                    $v[] = $p->getInvitedBy()->getFirstName();
+                    $v[] = $p->getInvitedBy()->getLastName();
+                    $v[] = $p->getInvitedBy()->getEmail();
+                } else {
+                    $v[] = '';
+                    $v[] = '';
+                    $v[] = '';
+                    $v[] = '';
+                }
+                fputcsv(
+                    $handle, // The file pointer
+                    $v, // The fields
+                    ';' // The delimiter
+                );
+            }
+            fclose($handle);
+        });
+
+        $response->setStatusCode(200);
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename="export.csv"');
+
+        return $response;
     }
 
     /**
