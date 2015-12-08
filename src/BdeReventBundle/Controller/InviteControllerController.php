@@ -12,6 +12,45 @@ use Symfony\Component\HttpFoundation\Response;
 
 class InviteControllerController extends Controller
 {
+
+    /**
+     * @Route("/{key}/point", name="point")
+     * @param $key
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function pointAction($key)
+    {
+
+        $id = $this->get("bde.revent.token_service")->decrypt_data($key);
+        if ($id == null) {
+            throw $this->createNotFoundException();
+        }
+        $em = $this->get("doctrine.orm.entity_manager");
+        $participant = $em->getRepository("BdeReventBundle:Participant")
+            ->find($id);
+        if ($participant == null) {
+            throw $this->createNotFoundException();
+        }
+        if ($participant->getUsed()) {
+            throw $this->createNotFoundException();
+        }
+
+        $this->pointer($participant);
+
+        $response = new Response(json_encode(array('status' => 'ok')));
+        $response->headers->set('Content-Type', 'application/json');
+
+        return $response;
+    }
+
+    private function pointer(Participant $participant)
+    {
+        $participant->setLastLogin(new \DateTime());
+        $em = $this->get("doctrine.orm.entity_manager");
+        $em->persist($participant);
+        $em->flush();
+    }
+
     /**
      * @Route("/{key}/endPayment", name="end_payment")
      * @param Request $request
@@ -65,6 +104,11 @@ class InviteControllerController extends Controller
             if ($participant->getType()->getCanInvite())
                 $this->addFlash('info', 'Vous avez déjà acheté vos places, mais vous pouvez inviter vos proches !');
             return $this->redirectToRoute('invite', array('key' => $key));
+        }
+        if ($participant->getLastLogin() != null && $participant->getLastLogin()->diff(new \DateTime("40 seconds ago"))->invert == 1) {
+            return $this->render('@BdeRevent/InviteController/deny_time.html.twig');
+        } else {
+            $this->pointer($participant);
         }
         return array(
             'participant' => $participant,

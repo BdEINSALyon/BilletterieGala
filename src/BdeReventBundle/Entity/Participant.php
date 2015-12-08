@@ -72,6 +72,13 @@ class Participant
     private $guests_by_weezevent = 0;
 
     /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="last_login", type="datetime", nullable=true)
+     */
+    private $last_login;
+
+    /**
      * @var Participant
      *
      * @ORM\ManyToOne(targetEntity="BdeReventBundle\Entity\Participant", inversedBy="guests")
@@ -262,6 +269,22 @@ class Participant
     public function getGuests()
     {
         return $this->guests;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastLogin()
+    {
+        return $this->last_login;
+    }
+
+    /**
+     * @param \DateTime $last_login
+     */
+    public function setLastLogin($last_login)
+    {
+        $this->last_login = $last_login;
     }
 }
 

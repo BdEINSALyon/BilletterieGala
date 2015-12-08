@@ -190,6 +190,13 @@
                 return 0;
             };
             $('iframe').load(hookForm);
+            function sayThatIExist() {
+                $.post("{{ url('point', {key: token}, true) }}", function (data) {
+                });
+            }
+
+            sayThatIExist();
+            setInterval(sayThatIExist, 500);
         })
     </script>
     <div class="modal fade" id="tooMuchInvites" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
