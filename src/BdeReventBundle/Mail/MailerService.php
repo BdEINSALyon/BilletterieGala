@@ -52,7 +52,7 @@ class MailerService
         $mail = $this->_em->getRepository('BdeReventBundle:Mail')->findOneBy(array('type' => $participant->getType()));
         $content = $this->generateMailFromData($mail, $participant);
         $this->mailgun->sendMessage($this->mailgun_domain, array(
-            'from' => 'accueil@gala.bde-insa-lyon.fr',
+            'from' => 'GALA 20 <accueil@gala.bde-insa-lyon.fr>',
             'to' => $participant->getEmail(),
             'subject' => $content['subject'],
             'text' => Html2Text::convert($content['body']),
