@@ -41,7 +41,8 @@
                         <td>{{ participant.used?'Oui':'Non' }}</td>
                         <td>{{ invite_token(participant) }}</td>
                         <td>{{ participant.invitedBy }}</td>
-                        <td><div class="btn-group" role="group">
+                        <td>
+                            <div class="" role="group">
                                 <a href="{{ url("return_mail",{key:invite_token(participant)}) }}"
                                    class="btn btn-primary">{{ icon('link') }}</a>
                                 <a href="{{ url("bderevent_participantsmanager_resendmail",{id:participant.id}) }}"
