@@ -106,7 +106,7 @@ class InviteControllerController extends Controller
             return $this->redirectToRoute('invite', array('key' => $key));
         }
         if ($participant->getLastLogin() != null && $participant->getLastLogin()->diff(new \DateTime("40 seconds ago"))->invert == 1) {
-            //return $this->render('@BdeRevent/InviteController/deny_time.html.twig');
+            return $this->render('@BdeRevent/InviteController/deny_time.html.twig');
         } else {
             $this->pointer($participant);
         }
