@@ -1,0 +1,65 @@
+{% extends "::admin.html.twig" %}
+
+{% block title %}Waiting Tickets{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="page-header">
+            <h1>{% block head_title %}Liste d'attente{% endblock %}
+                <small>{% block head_small %}Gestion des attentes{% endblock %}</small>
+
+            </h1>
+        </div>
+        <div class="row">
+            <table id="table_participants" class="table table-bordered table-hover table-striped">
+                <thead>
+                <tr id="search">
+                    <th class="col-md-1">Ticket</th>
+                    <th class="col-md-1">Nom</th>
+                    <th class="col-md-1">Prénom</th>
+                    <th class="col-md-1">Type</th>
+                    <th class="col-md-1">Téléphone</th>
+                    <th class="col-md-1">Nombre</th>
+                    <th class="col-md-2">Heure</th>
+                    <th class="col-md-2"></th>
+                </tr>
+                </thead>
+                <tbody id="participants">
+                {% for ticket in tickets %}
+                    <tr>
+                        <td>{{ ticket.id }}</td>
+                        <td>{{ ticket.participant.lastName }}</td>
+                        <td>{{ ticket.participant.firstName }}</td>
+                        <td>{{ ticket.participant.type }}</td>
+                        <td>{{ ticket.phone }}</td>
+                        <td>{{ ticket.amount }}</td>
+                        <td>{{ ticket.time|date('Y-m-d h:i') }}</td>
+                        <td>
+                            <div class="" role="group">
+                                <a href="{{ url("bderevent_waitingticketsmanager_delete",{id:ticket.id}) }}"
+                                   class="btn btn-danger">{{ icon('trash') }}</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>$(function () {
+            $('#table_participants')
+                    .removeClass('display')
+                    .addClass('table table-striped table-bordered');
+        })</script>
+{% endblock %}
+
+{% block stylesheets %}
+    <script type="text/javascript"
+            src="https://cdn.datatables.net/r/bs-3.3.5/jqc-1.11.3,dt-1.10.8/datatables.min.js"></script>
+    {{ parent() }}
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            $('#table_participants').DataTable();
+        });
+    </script>
+{% endblock %}

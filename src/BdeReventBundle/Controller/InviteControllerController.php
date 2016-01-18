@@ -4,6 +4,7 @@ namespace BdeReventBundle\Controller;
 
 use BdeReventBundle\Entity\Participant;
 use BdeReventBundle\Form\InviteForm;
+use BdeReventBundle\Form\WaitingTicketType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -120,6 +121,46 @@ class InviteControllerController extends Controller
             )),
             'token' => $key
         );
+    }
+
+    /**
+     * @Route("/{key}/waiting", name="waiting_list")
+     * @Template
+     */
+    public function waitingAction(Request $request, $key)
+    {
+        $id = $this->get("bde.revent.token_service")->decrypt_data($key);
+        if ($id == null) {
+            return $this->render('@BdeRevent/InviteController/deny.html.twig');
+        }
+        $participant = $this->get("doctrine.orm.entity_manager")->getRepository("BdeReventBundle:Participant")
+            ->find($id);
+        if ($participant == null) {
+            return $this->render('@BdeRevent/InviteController/deny.html.twig');
+        }
+        $waitingTicketRepository = $this->get("doctrine.orm.entity_manager")->getRepository("BdeReventBundle:WaitingTicket");
+        $wait = $waitingTicketRepository->findBy(array("participant" => $participant));
+
+        $form = $this->createForm(new WaitingTicketType($wait));
+
+        $form->handleRequest($request);
+
+        if ($form->isValid() && $wait == null) {
+            $wait = $form->getData();
+            $wait->setTime(new \DateTime());
+            $wait->setParticipant($participant);
+            $em = $this->get('doctrine.orm.default_entity_manager');
+            $em->persist($wait);
+            $em->flush($wait);
+            return $this->redirectToRoute('waiting_list', array('key' => $key));
+        }
+
+        return array(
+            'form' => $form->createView(),
+            'on_wait' => $wait != null,
+            'rank' => $waitingTicketRepository->getRankOf($participant)
+        );
+
     }
 
     /**

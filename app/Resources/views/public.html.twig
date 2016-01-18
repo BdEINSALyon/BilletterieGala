@@ -60,16 +60,126 @@
             vert-align: center;
             width: 100%;
         }
+
+        #skenav {
+            background: none repeat scroll 0 0 transparent;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            border: medium none;
+        }
+
+        #skenav .ske-menu, ul.menu {
+            font-size: 13px;
+            margin: 0px;
+            display: inline-block;
+            width: auto;
+            float: right;
+        }
+
+        #skenav .ske-menu ul.menu {
+            list-style: none;
+            margin: 0;
+        }
+
+        #skenav .ske-menu .menu li, ul.menu li {
+            float: left;
+            position: relative;
+            margin-left: 0px;
+            list-style: none outside none;
+        }
+
+        #skenav a {
+            color: #333333;
+            display: block;
+            font-size: 13px;
+            text-transform: uppercase;
+            line-height: 85px;
+            padding: 0 22px;
+            text-decoration: none;
+            transition: color 0.1s linear 0s, background 0.1s linear 0s;
+            -webkit-transition: color 0.1s linear 0s, background 0.1s linear 0s;
+            -moz-transition: color 0.1s linear 0s, background 0.1s linear 0s;
+            -o-transition: color 0.1s linear 0s, background 0.1s linear 0s;
+        }
+
+        #skenav ul ul {
+            position: absolute;
+            top: 100%;
+            left: 0px;
+            float: left;
+            width: 200px;
+            z-index: 99999;
+        }
+
+        #skenav ul .sub-menu li, #skenav ul ul li {
+            display: block;
+            width: 100%;
+        }
+
+        #skenav ul .children li:first-child, #skenav ul .sub-menu li:first-child {
+            border-top: none;
+        }
+
+        #skenav ul ul li {
+            border-top: 1px solid rgba(0, 0, 0, .15);
+        }
+
+        #skenav li a:hover, #skenav .sfHover, #skenav ul ul li {
+            background-color: #e8485b;
+            color: #FFFFFF;
+        }
+
+        #skenav ul ul ul.sub-menu, #skenav ul ul ul.children {
+            left: 100%;
+            top: 0px !important;
+            border-top: 0 none;
+            margin-top: 0;
+        }
+
+        #skenav ul ul a {
+            line-height: 1.2em;
+            font-size: 13px;
+            padding: 10px 20px;
+            width: auto;
+            height: auto;
+            color: #FFFFFF;
+        }
+
+        #header.skehead-headernav-shrink #skenav ul ul a {
+            line-height: 1.2em;
+        }
+
+        #skenav ul li:hover {
+            z-index: 999999999999;
+        }
+
+        * html #skenav ul li.current_page_item a, * html #skenav ul li.current-menu-ancestor a, * html #skenav ul li.current-menu-item a, * html #skenav ul li.current-menu-parent a, * html #skenav ul li a:hover {
+            color: #fff;
+        }
+
     </style>
 {% endblock %}
 
 {% block body %}
     <div id="header">
         <div class="container">
-            <div id="logo" class="span4">
-                <a href="http://gala.bde-insa-lyon.fr" title="GALA INSA Lyon" target="_blank">
-                    <img class="logo" src="{{ asset('bundles/bderevent/images/logo_gala.png') }}" alt="Gala INSA Lyon">
-                </a>
+            <div class="row">
+                <div id="logo" class="col-md-4">
+                    <a href="http://gala.bde-insa-lyon.fr" title="GALA INSA Lyon" target="_blank">
+                        <img class="logo" src="{{ asset('bundles/bderevent/images/logo_gala.png') }}"
+                             alt="Gala INSA Lyon">
+                    </a>
+                </div>
+                <div class="top-nav-menu col-md-8">
+                    <div id="skenav" class="ske-menu">
+                        <ul id="menu-main" class="menu sf-js-enabled sf-arrows">
+                            <li id="menu-item-1380"
+                                class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item menu-item-home menu-item-1380">
+                                <a href="waiting">Liste d'attente</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
